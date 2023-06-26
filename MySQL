@@ -18,19 +18,18 @@ select x.Constituent_LookupID
 	  ,[UCSD Recreation Soccer] = max(case when x.[Involvement_Type] = 'Recreation' then 'True' else '' end)
 into #athlrec
 from (select distinct a.[Constituent_LookupID]
-			,a.[Constituent_Name]
-			,a.[Constituent_SystemID]
-			,a.[Alumni_Record]
-			,a.[CAE_Constituency]
-			,e.[Involvement_Name]
-			,e.[Involvement_Type]
+		     ,a.[Constituent_Name]
+		     ,a.[Constituent_SystemID]
+		     ,a.[Alumni_Record]
+		     ,a.[CAE_Constituency]
+		     ,e.[Involvement_Name]
+		     ,e.[Involvement_Type]
 from radar.dbo.RADAR_ALUMNI a
 inner join radar.dbo.RADAR_EDUCATIONAL_INVOLVEMENT e on e.Constituent_SystemID = a.Constituent_SystemID															
 where e.Involvement_Name like '%Soccer%' 
 and (e.Involvement_Type like '%Rec%' or e.Involvement_Type like '%Athlet%')
 and a.Alumni_Record = 1) x
 group by x.Constituent_LookupID
-
 
 select * from #athlrec
 
@@ -40,11 +39,11 @@ select * from #athlrec
 select s.[Lookup ID] 
       ,s.[Formatted Name]
       ,[Last Name] = s.[Last Name or Organization Name]
-	    ,[SoccerCity SD Cohort] = case when s.[Lookup ID] in ('99186790','9877002864','99002948','99558108','99137579') then 'True' else '' end
-	    ,a.[UCSD Athletics Soccer]
-	    ,a.[UCSD Recreation Soccer]
-	    ,[Contactable by Email] = case when s.[Do Not Contact - Email] = '' and s.[Do Not Contact - GDPR-Email] = '' and s.[Primary Email Address] not in ('','DNC') then 'True' else '' end
-	    ,[Contactable by Mail] = case when s.[Do Not Contact - Mail] = '' and s.[Do Not Contact - GDPR-Mail] = '' and s.[Primary Address] not in ('','DNC') then 'True' else '' end
+      ,[SoccerCity SD Cohort] = case when s.[Lookup ID] in ('99186790','9877002864','99002948','99558108','99137579') then 'True' else '' end
+      ,a.[UCSD Athletics Soccer]
+      ,a.[UCSD Recreation Soccer]
+      ,[Contactable by Email] = case when s.[Do Not Contact - Email] = '' and s.[Do Not Contact - GDPR-Email] = '' and s.[Primary Email Address] not in ('','DNC') then 'True' else '' end
+      ,[Contactable by Mail] = case when s.[Do Not Contact - Mail] = '' and s.[Do Not Contact - GDPR-Mail] = '' and s.[Primary Address] not in ('','DNC') then 'True' else '' end
       ,s.[Has Active DO NOT]
       ,s.[CAE Constituency]
       ,s.[Birth Date]
@@ -128,7 +127,7 @@ select s.[Lookup ID]
       ,s.[Do Not Contact - Permanent Health Sciences]
       ,s.[Do Not Contact - Permanent]
       ,s.[Do Not Contact - All Channels]
-	    ,s.[Do Not Contact - All Channels Athletics]
+      ,s.[Do Not Contact - All Channels Athletics]
       ,s.[Do Not Contact - GDPR-All Channels]
       ,s.[Do Not Contact - Minor]
       ,s.[Do Not Contact - Unaffiliated Memorial Donor]
