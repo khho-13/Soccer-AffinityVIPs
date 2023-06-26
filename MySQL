@@ -1,0 +1,202 @@
+/*************************************************************************************************************
+CS1532099-SoccerAffinityVIPs-MasonaLam
+
+Invitations to VIP event to view Manchester United practice session(s). Include:
+- Alumni who were part of a UC San Diego soccer team
+- Alumni who may have been on the Men's and Women's Club Soccer team under Recreation
+- ad hoc IDS for SoccerCity SD cohort
+*************************************************************************************************************/
+
+-- use RADAR-DEV
+
+-----------------------------------
+-- Alumni (Kim)
+-----------------------------------
+if object_id('tempdb..#athlrec') is not null drop table #athlrec;
+select x.Constituent_LookupID
+	  ,[UCSD Athletics Soccer] = max(case when x.[Involvement_Type] = 'Athletic Dept' then 'True' else '' end)
+	  ,[UCSD Recreation Soccer] = max(case when x.[Involvement_Type] = 'Recreation' then 'True' else '' end)
+into #athlrec
+from (select distinct a.[Constituent_LookupID]
+			,a.[Constituent_Name]
+			,a.[Constituent_SystemID]
+			,a.[Alumni_Record]
+			,a.[CAE_Constituency]
+			,e.[Involvement_Name]
+			,e.[Involvement_Type]
+from radar.dbo.RADAR_ALUMNI a
+inner join radar.dbo.RADAR_EDUCATIONAL_INVOLVEMENT e on e.Constituent_SystemID = a.Constituent_SystemID															
+where e.Involvement_Name like '%Soccer%' 
+and (e.Involvement_Type like '%Rec%' or e.Involvement_Type like '%Athlet%')
+and a.Alumni_Record = 1) x
+group by x.Constituent_LookupID
+
+
+select * from #athlrec
+
+-----------------------------------
+-- Final
+-----------------------------------
+select s.[Lookup ID] 
+      ,s.[Formatted Name]
+      ,[Last Name] = s.[Last Name or Organization Name]
+	    ,[SoccerCity SD Cohort] = case when s.[Lookup ID] in ('99186790','9877002864','99002948','99558108','99137579') then 'True' else '' end
+	    ,a.[UCSD Athletics Soccer]
+	    ,a.[UCSD Recreation Soccer]
+	    ,[Contactable by Email] = case when s.[Do Not Contact - Email] = '' and s.[Do Not Contact - GDPR-Email] = '' and s.[Primary Email Address] not in ('','DNC') then 'True' else '' end
+	    ,[Contactable by Mail] = case when s.[Do Not Contact - Mail] = '' and s.[Do Not Contact - GDPR-Mail] = '' and s.[Primary Address] not in ('','DNC') then 'True' else '' end
+      ,s.[Has Active DO NOT]
+      ,s.[CAE Constituency]
+      ,s.[Birth Date]
+      ,s.[Spouse Lookup ID]
+      ,s.[Spouse Formatted Name]
+      ,s.[Spouse Last Name]
+      ,s.[Wealth Capacity Overall Rating]
+      ,s.[Major Giving Capacity]
+      ,s.[Spouse Wealth Capacity Overall Rating]
+      ,s.[Spouse Major Giving Capacity]
+      ,s.[Recog: Committed: Combined: Total]
+      ,s.[Prospect Manager Name]
+      ,s.[Spouse Prospect Manager Name]
+      ,s.[Primary Development Region]
+      ,s.[Education 1 Degree]
+      ,s.[Education 1 Grad Date]
+      ,s.[Education 1 Division]
+      ,s.[Education 1 Department]
+      ,s.[Education 2 Degree]
+      ,s.[Education 2 Grad Date]
+      ,s.[Education 2 Division]
+      ,s.[Education 2 Department]
+      ,s.[Education 3 Degree]
+      ,s.[Education 3 Grad Date]
+      ,s.[Education 3 Division]
+      ,s.[Education 3 Department]
+      ,s.[Current Employer Name]
+      ,s.[Current Job Title]
+      ,s.[Current Employment Start Date]
+      ,s.[Recog: Committed: Combined: Total Hlth Sci]
+      ,s.[Recog: Committed: Combined: Largest Gift Date]
+      ,s.[Recog: Committed: Combined: Largest Gift Amt]
+      ,s.[Recog: Committed: Combined: Largest Gift Fund]
+      ,s.[Recog: Committed: Combined: Last Gift Date]
+      ,s.[Recog: Committed: Combined: Last Gift Amt]
+      ,s.[Recog: Committed: Combined: Last Gift Fund]
+      ,s.[Most Recent Interaction Contact Method]
+      ,s.[Most Recent Interaction Subcategory]
+      ,s.[Most Recent Actual Interaction Date]
+      ,s.[Most Recent Interaction Comment]
+      ,s.[Most Recent Interaction Owner]
+      ,s.[Current Prospect Plan 1 Name]
+      ,s.[Current Prospect Plan 1 Type]
+      ,s.[Current Prospect Plan 1 Stage]
+      ,s.[Current Prospect Plan 1 Opportunities Status]
+      ,s.[Current Prospect Plan 1 Opportunities Expected Ask Date]
+      ,s.[Current Prospect Plan 1 Opportunities Expected Ask Amount]
+      ,s.[Current Prospect Plan 1 Opportunities Ask Date]
+      ,s.[Current Prospect Plan 1 Opportunities Ask Amount]
+      ,s.[Current Prospect Plan 1 Opportunities Primary Manager Name]
+      ,s.[Current Prospect Plan 2 Name]
+      ,s.[Current Prospect Plan 2 Type]
+      ,s.[Current Prospect Plan 2 Stage]
+      ,s.[Current Prospect Plan 2 Opportunities Status]
+      ,s.[Current Prospect Plan 2 Opportunities Expected Ask Date]
+      ,s.[Current Prospect Plan 2 Opportunities Expected Ask Amount]
+      ,s.[Current Prospect Plan 2 Opportunities Ask Date]
+      ,s.[Current Prospect Plan 2 Opportunities Ask Amount]
+      ,s.[Current Prospect Plan 2 Opportunities Primary Manager Name]
+      ,s.[Current Member: UC San Diego Alumni Board of Directors]
+      ,s.[Current Member: UC San Diego Foundation Board of Trustees]
+      ,s.[Current Member: Campaign Committees (all groups)]
+      ,s.[Members: Current York Society]
+      ,s.[Notification: VIP]
+      ,s.[Primary Addressee]
+      ,s.[Primary Salutation]
+      ,s.[Primary Address]
+      ,s.[Primary City]
+      ,s.[Primary State]
+      ,s.[Primary Zip]
+      ,s.[Primary County]
+      ,s.[Primary Country]
+      ,s.[Primary Full Address]
+      ,s.[Primary Address Type]
+      ,s.[Primary Phone Number]
+      ,s.[Primary Phone Type]
+      ,s.[Primary Email Address]
+      ,s.[Primary Email Type]
+      ,s.[Do Not Contact - FHS Only]
+      ,s.[Notification: GDPR Individual]
+      ,s.[Do Not Contact - Permanent Health Sciences]
+      ,s.[Do Not Contact - Permanent]
+      ,s.[Do Not Contact - All Channels]
+	    ,s.[Do Not Contact - All Channels Athletics]
+      ,s.[Do Not Contact - GDPR-All Channels]
+      ,s.[Do Not Contact - Minor]
+      ,s.[Do Not Contact - Unaffiliated Memorial Donor]
+      ,s.[Do Not Contact - FERPA-Permanent]
+      ,s.[Do Not Contact - FERPA-Advancement]
+      ,s.[Do Not Contact - All Channels Planned Giving]
+      ,s.[Do Not Contact - Email]
+      ,s.[Do Not Contact - GDPR-Email]
+      ,s.[Do Not Contact - Mail]
+      ,s.[Do Not Contact - GDPR-Mail]
+      ,s.[Do Not Contact - Phone]
+      ,s.[Do Not Contact - GDPR-Phone]
+      ,s.[Do Not Solicit - All Channels]
+      ,s.[Do Not Solicit - Email]
+      ,s.[Do Not Solicit - Mail]
+      ,s.[Do Not Solicit - Phonathon]
+      ,s.[Special Handling Notification]
+      ,s.[Mail Preference: Events: Do Not Send]
+      ,s.[Mail Preference: Events ACE: Do Not Send]
+      ,s.[Gives Anonymously or Has Anonymous Gift]
+      ,s.[Dietary Restriction]
+      ,s.[Disqualified Area1]
+      ,s.[Disqualified Area2]
+      ,s.[Disqualified Area3]
+      ,s.[Disqualified - Advancement]
+      ,s.[Disqualified - Health Sciences Development]
+      ,s.[Prospect Status]
+      ,s.[Primary Household Member]
+      ,s.[Household LookupID]
+      ,s.[Household Name]
+      ,s.[Is Deceased]
+      ,s.[Is Individual]
+      ,s.[Is Organization]
+      ,s.[Is Estate/Trust]
+      ,s.[Is Primary Organization]
+      ,s.[Is Group]
+      ,s.[Toxic_Exclusions]
+      ,s.[Constituent_SystemID]
+      ,s.[Rating_Major_Giving_Capacity_Value]
+      ,s.[Usable Capacity]
+      ,s.[Table_Date]
+from radar.dbo.RADAR_STANDARD_START s
+left join #athlrec a on a.[Constituent_LookupID] = s.[Lookup ID]
+where (s.[Lookup ID] in ('99186790','9877002864','99002948','99558108','99137579') -- No usable contact for Landon Donovan
+	or a.[Constituent_LookupID] is not NULL)
+	and s.Toxic_Exclusions = ''
+	and s.[Mail Preference: Events: Do Not Send] = ''
+	and ((s.[Do Not Contact - Email] = '' and s.[Do Not Contact - GDPR-Email] = '' and s.[Primary Email Address] not in ('','DNC'))
+	or (s.[Do Not Contact - Mail] = '' and s.[Do Not Contact - GDPR-Mail] = '' and s.[Primary Address] not in ('','DNC')))
+	and s.[Is Individual] = 'True'
+	and s.[Prospect Status] = ''
+	and s.[Disqualified - Advancement] = ''
+	and s.[Lookup ID] not in (select Constituent_LookupID 
+								from radar.dbo.RADAR_DISQUALIFIED_AREA_FLAT 
+								where [University Development] = 1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
